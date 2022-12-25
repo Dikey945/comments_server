@@ -1,3 +1,4 @@
+
 {
   "name": "api",
   "version": "1.0.0",
@@ -7,7 +8,7 @@
     "start": "./node_modules/.bin/netlify-lambda serve src",
     "build": "./node_modules/.bin/netlify-lambda build src",
     "nodemon": "nodemon src/server.ts",
-    "setup": "ts-node src/setup.ts",
+    "setup": "ts-node src/setup.ts --unhandled-rejections=strict",
     "ts-check": "tsc --noEmit --lib ES2015 ./src/*.ts",
     "lint": "eslint --ext .tsx,.ts --fix ./src -c .eslintrc.json"
   },
