@@ -9,8 +9,16 @@ const app = express();
 app.use(cors());
 
 app.use(`${API_PATH}`, router);
+router.get('/', (req, res) => {
+  res.json({
+    'hello': '123',
+  })
+})
 
-// // for local testing
+app.use('/', router);
+app.use(express.static('dist'))
+
+// for local testing
 // app.listen(5000, () => {
 //   console.log('Server started');
 // });
