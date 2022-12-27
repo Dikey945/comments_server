@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/netlify-lambda serve src",
+    "start": "node src/server.mjs",
     "build": "./node_modules/.bin/netlify-lambda build src",
     "nodemon": "nodemon src/server.mjs",
     "setup": "ts-node src/setup.ts --unhandled-rejections=strict",
