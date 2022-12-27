@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import serverless from 'serverless-http';
+import { router as postsRouter} from './routes/posts';
 
 const router = express.Router();
-
 const app = express();
 
 app.use(cors());
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
   })
 })
 
-app.use('/', router);
+app.use('/posts', express.json(), postsRouter);
 app.use(express.static('dist'))
 
 app.listen(5000, () => {
