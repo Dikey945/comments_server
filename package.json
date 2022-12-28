@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.ts",
+    "start": "ts-node-esm src/server.ts",
     "build": "./node_modules/.bin/netlify-lambda build src",
     "nodemon": "nodemon src/server.ts",
     "setup": "ts-node src/setup.ts --unhandled-rejections=strict",
