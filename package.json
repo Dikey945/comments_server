@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.mjs",
+    "start": "node src/server.ts",
     "build": "./node_modules/.bin/netlify-lambda build src",
-    "nodemon": "nodemon src/server.mjs",
+    "nodemon": "nodemon src/server.ts",
     "setup": "ts-node src/setup.ts --unhandled-rejections=strict",
     "ts-check": "tsc --noEmit --lib ES2015 ./src/*.ts",
     "lint": "eslint --ext .tsx,.ts --fix ./src -c .eslintrc.json"
