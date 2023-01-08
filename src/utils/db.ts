@@ -1,15 +1,23 @@
-import { Sequelize } from "sequelize";
-import * as dotenv from 'dotenv';
-dotenv.config();
+// import { Sequelize } from "sequelize";
+// import * as dotenv from 'dotenv';
 
 
-export const sequelize = new Sequelize(`${process.env.DATABASE_URL}`,
-  {
-  dialectOptions: {
-    ssl: {
-      rejectUnauthorized: false,
-    }
-  },
-  dialectModule: require('mysql2'),
-  dialect: 'mysql',
-})
+
+// dotenv.config();
+//
+// export const sequelize = new Sequelize('postgres', 'postgres', '1213', {
+//   host: 'localhost',
+//   dialect: 'postgres',
+// })
+
+
+// export const sequelize = new Sequelize(`${process.env.DATABASE_URL}`,
+//   {
+//   dialectOptions: {
+//     ssl: {
+//       rejectUnauthorized: false,
+//     }
+//   },
+//   dialectModule: require('mysql2'),
+//   dialect: 'mysql',
+// })

@@ -59,7 +59,6 @@ import {sequelize} from "./utils/db";
       parentId: comment1.dataValues.id,
       message: "I am a nested comment",
       userId: sveta.dataValues.id,
-      postId: post1.dataValues.id,
     })
 
     const comment3 = await Comment.create({

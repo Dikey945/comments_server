@@ -9,7 +9,7 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getOne = async (req: Request, res: Response) => {
   const { postId } = req.params;
-  const foundPost = await postsServices.getPostById(+postId);
+  const foundPost = await postsServices.getPostById(postId);
 
   if(!foundPost) {
     res.sendStatus(404);
@@ -18,18 +18,18 @@ export const getOne = async (req: Request, res: Response) => {
 
   res.send(foundPost);
 }
-
-export const addNewPost = async (req: Request, res: Response) => {
-  const { title, body, userId } = req.body;
-
-  if(!title || !body || !userId) {
-    res.sendStatus(422);
-    return;
-  }
-
-  const newPost = await postsServices.addPost(title, body, userId);
-
-  res.statusCode  = 201;
-  res.json(newPost)
-}
+//
+// export const addNewPost = async (req: Request, res: Response) => {
+//   const { title, body, userId } = req.body;
+//
+//   if(!title || !body || !userId) {
+//     res.sendStatus(422);
+//     return;
+//   }
+//
+//   const newPost = await postsServices.addPost(title, body, userId);
+//
+//   res.statusCode  = 201;
+//   res.json(newPost)
+// }
 
