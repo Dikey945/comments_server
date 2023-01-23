@@ -16,7 +16,12 @@ const COMMENT_SELECT_FIELDS = {
 };
 
 // eslint-disable-next-line max-len
-export const createComment = async (message: string, postId: string, parentId: string | null, userId: string) => {
+export const createComment = async (
+  message: string,
+  postId: string,
+  parentId: string | null,
+  userId: string,
+) => {
   return prisma.comment.create({
     data: {
       message,

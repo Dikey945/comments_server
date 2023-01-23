@@ -10,9 +10,9 @@ export const createComment = async (req: Request, res: Response) => {
     userId,
   } = req.body;
 
-  if (!message || !postId || !userId) {
-    throw new Error('Missing required fields');
-  }
+  // if (!message || !postId || !userId) {
+  //   throw new Error('Missing required fields');
+  // }
 
   const createdComment
     = await commentsServices.createComment(message, postId, parentId, userId);
