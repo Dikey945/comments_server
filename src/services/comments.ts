@@ -47,3 +47,10 @@ export const getCommentOwner = async (commentId: string) => {
     select: { userId: true },
   });
 };
+
+export const deleteComment = async (id: string) => {
+  return prisma.comment.delete({
+    where: { id },
+    select: { id: true },
+  });
+};

@@ -5,8 +5,20 @@ const prisma = new PrismaClient();
 async function seed() {
   await prisma.post.deleteMany();
   await prisma.user.deleteMany();
-  const kyle = await prisma.user.create({ data: { name: 'Kyle' } });
-  const sally = await prisma.user.create({ data: { name: 'Sally' } });
+  const kyle = await prisma.user.create({
+    data: {
+      name: 'Kyle',
+      email: 'dfsdf@mail.com',
+      password: '123456',
+    },
+  });
+  const sally = await prisma.user.create({
+    data: {
+      name: 'Sally',
+      email: 'ddsfsdfdf@mail.com',
+      password: '12345678',
+    },
+  });
 
   const post1 = await prisma.post.create({
     data: {

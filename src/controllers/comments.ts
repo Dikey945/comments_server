@@ -41,3 +41,16 @@ export const updateComment = async (req: Request, res: Response) => {
 
   res.send(updatedComment);
 };
+
+export const deleteComment = async (req: Request, res: Response) => {
+  // const { userId } = await getCommentOwner(req.params.commentId);
+  //
+  // if (userId !== req.body.userId) {
+  //   res.sendStatus(403);
+  // }
+
+  const deletedComment
+    = await commentsServices.deleteComment(req.params.commentId);
+
+  res.send(deletedComment);
+};

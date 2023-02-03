@@ -36,6 +36,7 @@ export const getPostById = async (postId: string) => {
               name: true,
             },
           },
+          _count: { select: { likes: true } },
         },
       },
     },
