@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import serverless from 'serverless-http';
+import cokieParser from 'cookie-parser';
 import * as process from 'process';
 import { router as postRouter } from './routes/posts';
 import { router as commentsRouter } from './routes/comments';
@@ -16,6 +17,8 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+
+app.use(cokieParser());
 
 router.get('/', (req, res) => {
   res.json({

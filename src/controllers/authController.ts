@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { getUserByEmail, normalizeUser, registerService }
+import bcrypt from 'bcrypt';
+import {
+  getUserByEmail, NormalizedUser, normalizeUser, registerService,
+}
   from '../services/userService';
 import { jwtService } from '../services/jwtService';
 import { ApiError } from '../exeptions/ApiError';
@@ -123,35 +126,60 @@ export const deleteAccount = async (req: Request, res: Response) => {
   return res.status(200).send({ message: 'User deleted successfully' });
 };
 
+const sendAuthentications = (res: Response, user: any) => {
+  const userData = normalizeUser(user);
+  const accessToken = jwtService.generateAccessToken(userData);
+  const refreshToken = jwtService.generateRefreshToken(userData);
+
+  // To remove client js code from processing refresh token we will use cookie
+
+  res.cookie('refreshToken', refreshToken, {
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+    // with this option client js code will not be able to access this cookie
+    httpOnly: true,
+  });
+
+  res.send({
+    user: userData,
+    accessToken,
+  });
+};
+
 export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const user = await getUserByEmail(email);
+  const { email, password } = req.body;
+  const user = await getUserByEmail(email);
 
-    if (!user) {
-      throw ApiError.BadRequest('User with this email not found');
-    }
-
-    if (!user) {
-      res.sendStatus(401);
-
-      return;
-    }
-
-    if (user.password !== password) {
-      res.sendStatus(401);
-
-      return;
-    }
-
-    const userData = normalizeUser(user);
-    const accessToken = jwtService.generateAccessToken(userData);
-
-    res.send({
-      user: userData,
-      accessToken,
-    });
-  } catch (e) {
-    res.sendStatus(500);
+  if (!user) {
+    throw ApiError.BadRequest('User with this email not found');
   }
+
+  if (!user) {
+    res.sendStatus(401);
+
+    return;
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    res.sendStatus(401);
+
+    return;
+  }
+
+  sendAuthentications(res, user);
+};
+
+export const refresh = async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+  const userData
+    = jwtService.validateRefreshToken(refreshToken) as NormalizedUser;
+
+  if (!userData) {
+    throw ApiError.Unauthorized();
+  }
+
+  const user = await getUserByEmail(userData.email);
+
+  sendAuthentications(res, user);
 };

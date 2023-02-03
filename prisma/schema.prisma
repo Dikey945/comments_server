@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "postgres://ubcikcfqofrzog:57229cdf94a438115901c26bfc7550306cb68e6ace4144e72110184e92f7b593@ec2-34-247-72-29.eu-west-1.compute.amazonaws.com:5432/dfn83soe6a3jjj"
+  provider          = "postgresql"
+  url               = "postgres://ubcikcfqofrzog:57229cdf94a438115901c26bfc7550306cb68e6ace4144e72110184e92f7b593@ec2-34-247-72-29.eu-west-1.compute.amazonaws.com:5432/dfn83soe6a3jjj"
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -19,13 +19,14 @@ model Post {
 }
 
 model User {
-  id       String    @id @default(uuid())
-  name     String
-  email    String    @unique
-  password String
-  activationToken String? @unique
-  comments Comment[]
-  likes    Like[]
+  id              String    @id @default(uuid())
+  name            String
+  email           String    @unique
+  password        String
+  activationToken String?   @unique
+  comments        Comment[]
+  likes           Like[]
+  Token           Token[]
 }
 
 model Comment {
@@ -48,5 +49,15 @@ model Like {
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String
   commentId String
+
   @@id([userId, commentId])
+}
+
+model Token {
+  id            String   @id @default(uuid())
+  refreshtToken String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
 }

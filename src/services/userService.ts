@@ -6,7 +6,7 @@ import { ApiError } from '../exeptions/ApiError';
 
 const prisma = new PrismaClient();
 
-interface NormalizedUser {
+export interface NormalizedUser {
   id: string;
   name: string;
   email: string;

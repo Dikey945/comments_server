@@ -14,3 +14,4 @@ authRouter.delete(
   '/activate/:userId',
   catchError(authController.deleteAccount),
 );
+authRouter.get('/refresh', catchError(authController.refresh));
