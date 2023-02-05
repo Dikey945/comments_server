@@ -10,9 +10,9 @@ export const createComment = async (req: Request, res: Response) => {
     userId,
   } = req.body;
 
-  // if (!message || !postId || !userId) {
-  //   throw new Error('Missing required fields');
-  // }
+  if (!message || !postId || !userId) {
+    throw new Error('Missing required fields');
+  }
 
   const createdComment
     = await commentsServices.createComment(message, postId, parentId, userId);
@@ -23,6 +23,7 @@ export const createComment = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
   const {
     message,
+    userId: reqUserId,
   } = req.body;
 
   if (!message) {
@@ -32,7 +33,7 @@ export const updateComment = async (req: Request, res: Response) => {
   // @ts-ignore
   const { userId } = await getCommentOwner(req.params.commentId);
 
-  if (userId !== req.body.userId) {
+  if (userId !== reqUserId) {
     res.sendStatus(403);
   }
 

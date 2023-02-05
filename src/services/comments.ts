@@ -33,13 +33,16 @@ export const createComment = async (
   });
 };
 
-export const updateComment = async (message: string, id: string) => {
-  return prisma.comment.update({
-    where: { id },
-    data: { message },
-    select: { message: true },
-  });
-};
+export const updateComment
+  = async (message: string, id: string) => {
+    return prisma.comment.update({
+      where: {
+        id,
+      },
+      data: { message },
+      select: { message: true },
+    });
+  };
 
 export const getCommentOwner = async (commentId: string) => {
   return prisma.comment.findUnique({

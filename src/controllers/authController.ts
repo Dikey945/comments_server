@@ -7,6 +7,7 @@ import {
   from '../services/userService';
 import { jwtService } from '../services/jwtService';
 import { ApiError } from '../exeptions/ApiError';
+import { getByToken, saveToken } from '../services/tokenService';
 
 const prisma = new PrismaClient();
 
@@ -54,6 +55,28 @@ const validateUsername = (value: string) => {
 };
 
 // registration controller
+const sendAuthentications = async (res: Response, user: any) => {
+  const userData = normalizeUser(user);
+  const accessToken = jwtService.generateAccessToken(userData);
+  const refreshToken = jwtService.generateRefreshToken(userData);
+
+  await saveToken(user.id, refreshToken);
+  // To remove client js code from processing refresh token we will use cookie
+
+  res.cookie('refreshToken', refreshToken, {
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+    // with this option client js code will not be able to access this cookie
+    httpOnly: true,
+  });
+
+  res.send({
+    data: {
+      user: userData,
+      accessToken,
+    },
+  });
+};
+
 export const registration
   = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password, name } = req.body;
@@ -74,36 +97,38 @@ export const registration
   };
 
 export const activate = async (req: Request, res: Response) => {
-  try {
-    const { activationToken } = req.params;
+  const { activationToken } = req.params;
 
-    if (!activationToken) {
-      res.sendStatus(401);
+  const user = await prisma.user.findUnique({
+    where: {
+      activationToken,
+    },
+  });
 
-      return;
-    }
+  if (!user) {
+    res.sendStatus(404);
 
-    const user = await prisma.user.findUnique({
+    return;
+  }
+
+  if (user && user.id) {
+    await prisma.user.update({
       where: {
-        activationToken,
+        id: user.id,
+      },
+      data: {
+        activationToken: null,
       },
     });
-
-    if (user && user.id) {
-      await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          activationToken: null,
-        },
-      });
-    }
-
-    res.send(user);
-  } catch (e) {
-    res.sendStatus(500);
   }
+
+  const updatedUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+
+  await sendAuthentications(res, updatedUser);
 };
 
 export const deleteAccount = async (req: Request, res: Response) => {
@@ -124,25 +149,6 @@ export const deleteAccount = async (req: Request, res: Response) => {
   });
 
   return res.status(200).send({ message: 'User deleted successfully' });
-};
-
-const sendAuthentications = (res: Response, user: any) => {
-  const userData = normalizeUser(user);
-  const accessToken = jwtService.generateAccessToken(userData);
-  const refreshToken = jwtService.generateRefreshToken(userData);
-
-  // To remove client js code from processing refresh token we will use cookie
-
-  res.cookie('refreshToken', refreshToken, {
-    maxAge: 15 * 24 * 60 * 60 * 1000,
-    // with this option client js code will not be able to access this cookie
-    httpOnly: true,
-  });
-
-  res.send({
-    user: userData,
-    accessToken,
-  });
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -167,7 +173,7 @@ export const login = async (req: Request, res: Response) => {
     return;
   }
 
-  sendAuthentications(res, user);
+  await sendAuthentications(res, user);
 };
 
 export const refresh = async (req: Request, res: Response) => {
@@ -179,7 +185,13 @@ export const refresh = async (req: Request, res: Response) => {
     throw ApiError.Unauthorized();
   }
 
+  const token = await getByToken(refreshToken);
+
+  if (!token) {
+    throw ApiError.Unauthorized();
+  }
+
   const user = await getUserByEmail(userData.email);
 
-  sendAuthentications(res, user);
+  await sendAuthentications(res, user);
 };

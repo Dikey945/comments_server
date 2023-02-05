@@ -15,6 +15,8 @@ export const errorMiddleware
         message,
         errors,
       });
+
+      return;
     }
 
     res.status(500).send({

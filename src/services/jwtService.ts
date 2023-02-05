@@ -6,7 +6,8 @@ function generateAccessToken(user: any) {
 
 function generateRefreshToken(user: any) {
   return jwt
-    .sign(user, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '15d' });
+    .sign(user, process.env.JWT_REFRESH_SECRET as string,
+      { expiresIn: '15 days' });
 }
 
 function validateAccessToken(token: string) {
